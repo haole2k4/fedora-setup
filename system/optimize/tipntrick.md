@@ -50,3 +50,30 @@ sudo scxctl restore                                   # Khôi phục mặc đị
 # Kiểm tra I/O scheduler của NVMe (cachyos-settings đặt [kyber] cho NVMe, mq-deadline cho SSD, bfq cho HDD)
 cat /sys/block/nvme0n1/queue/scheduler
 ```
+
+## Ổn định Wi-Fi Realtek RTL8852BE (`rtw89_8852be`)
+
+Card RTL8852BE (`04:00.0`) bật mặc định PCIe ASPM L1/L1.1, CLKREQ và firmware deep power save (`disable_ps_mode=N`), dễ gây lỗi `read/write rf busy swsi`, `timed out to flush queues` và rớt kết nối `CTRL-EVENT-BEACON-LOSS` (nhất là với AP 2.4GHz đổi băng thông 20/40MHz).
+
+### 1. Cấu hình module kernel (`/etc/modprobe.d/rtw89.conf`)
+```ini
+options rtw89_pci disable_aspm_l1=y disable_aspm_l1ss=y disable_clkreq=y
+options rtw89_core disable_ps_mode=y
+```
+
+### 2. Tối ưu profile NetworkManager
+```bash
+nmcli connection modify "<TEN_WIFI>" 802-11-wireless.mac-address-randomization never 802-11-wireless.powersave 2
+nmcli connection up "<TEN_WIFI>"
+```
+
+### 3. Kiểm tra nhanh trạng thái tham số & liên kết
+```bash
+cat /sys/module/rtw89_pci/parameters/disable_aspm_l1
+cat /sys/module/rtw89_pci/parameters/disable_aspm_l1ss
+cat /sys/module/rtw89_pci/parameters/disable_clkreq
+cat /sys/module/rtw89_core/parameters/disable_ps_mode
+cat /sys/bus/pci/devices/0000:04:00.0/link/l1_aspm
+cat /sys/bus/pci/devices/0000:04:00.0/link/l1_1_aspm
+iw dev wlp4s0 link
+```

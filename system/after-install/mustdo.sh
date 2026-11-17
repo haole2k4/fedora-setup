@@ -45,6 +45,16 @@ sudo systemctl start tlp
 # Tùy chọn: tránh UPower tự động ngủ đông/tắt nguồn đột ngột khi báo pin tới hạn
 sudo sed -i 's/^CriticalPowerAction=.*/CriticalPowerAction=Ignore/' /etc/UPower/UPower.conf
 
+# Wi-Fi Realtek RTL8852BE (rtw89_8852be): tắt PCIe ASPM L1/L1.1, CLKREQ và firmware deep power save
+# để tránh lỗi "read/write rf busy swsi", "timed out to flush queues" và rớt mạng CTRL-EVENT-BEACON-LOSS
+sudo tee /etc/modprobe.d/rtw89.conf << 'EOF'
+options rtw89_pci disable_aspm_l1=y disable_aspm_l1ss=y disable_clkreq=y
+options rtw89_core disable_ps_mode=y
+EOF
+# Tùy chọn NetworkManager cho profile Wi-Fi hay dùng (tránh random MAC & tắt powersave):
+# nmcli connection modify "<TEN_WIFI>" 802-11-wireless.mac-address-randomization never 802-11-wireless.powersave 2
+# nmcli connection up "<TEN_WIFI>"
+
 #dotfiles (clone repo dotfiles riêng & tạo symlink bằng GNU Stow)
 # git clone https://github.com/haole2k4/dotfiles ~/dotfiles && make -C ~/dotfiles stow
 

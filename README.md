@@ -55,7 +55,7 @@ make powersave       # Tắt Docker, chuyển scx_lavd sang PowerSave (nếu có
 
 ### Thiết lập sau khi cài mới (`system/after-install/`):
 - **Cấu hình DNF:** `sudo cp system/after-install/dnf.conf /etc/dnf/dnf.conf`
-- **Cài đặt cơ bản:** Xem và chạy từng bước trong [`system/after-install/mustdo.sh`](system/after-install/mustdo.sh) (RPM Fusion, Multimedia Codecs, NVIDIA `akmod-nvidia`, `tlp`, slim `dracut` initramfs, `kernel-cachyos`, `cachyos-settings`, `scx_loader` với `scx_lavd`, clone `dotfiles`...).
+- **Cài đặt cơ bản:** Xem và chạy từng bước trong [`system/after-install/mustdo.sh`](system/after-install/mustdo.sh) (RPM Fusion, Multimedia Codecs, NVIDIA `akmod-nvidia`, `tlp`, Wi-Fi `rtw89_8852be`, slim `dracut` initramfs, `kernel-cachyos`, `cachyos-settings`, `scx_loader` với `scx_lavd`, clone `dotfiles`...).
 - **Sửa tốc độ cuộn Touchpad:** Xem [`system/after-install/touchpadfix.sh`](system/after-install/touchpadfix.sh).
 
 ### Quản lý Kernel & Dịch vụ nền (`system/optimize/`):
