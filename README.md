@@ -48,7 +48,10 @@ make gnome-restore   # Nạp lại cấu hình từ gnome/gnome-settings.dconf
 
 ### Chạy nhanh qua `Makefile`:
 ```bash
-make optimize        # Dọn cache dnf5, cập nhật gói, dọn journalctl (7 ngày) & fstrim SSD
+make optimize        # Dọn cache dnf5, cập nhật gói, dọn kernel cũ (giữ tối đa 3), dọn journalctl (7 ngày) & fstrim SSD
+make kernel-check    # Xem kernel cũ nào sẽ bị xoá (không cần sudo)
+make kernel-prune    # Dọn kernel cũ ngay
+make kernel-auto     # Bật tự dọn kernel sau mỗi lần cập nhật & 5 phút sau khi boot
 make performance     # Bật Docker, chuyển scx_lavd sang Gaming (nếu có) & bật hiệu ứng/extension GNOME
 make powersave       # Tắt Docker, chuyển scx_lavd sang PowerSave (nếu có) & tắt hiệu ứng/extension GNOME
 ```
@@ -61,7 +64,9 @@ make powersave       # Tắt Docker, chuyển scx_lavd sang PowerSave (nếu có
 ### Quản lý Kernel & Dịch vụ nền (`system/optimize/`):
 - [`system/optimize/optimize.sh`](system/optimize/optimize.sh): Tắt các dịch vụ ngầm gây tốn pin/SSD (`localsearch`, `abrtd`, `ModemManager`...) và cài `auto-cpufreq`.
 - [`system/optimize/performance.sh`](system/optimize/performance.sh) & [`system/optimize/powersave.sh`](system/optimize/powersave.sh): Chuyển đổi chế độ hiệu năng/tiết kiệm pin (Docker, `scxctl` cho `scx_lavd`, hiệu ứng & extension GNOME).
-- [`system/optimize/deloldkernel.sh`](system/optimize/deloldkernel.sh) & [`system/optimize/resignfornewkernel.sh`](system/optimize/resignfornewkernel.sh): Xóa kernel cũ an toàn và ký lại Secure Boot (MOK) cho cả kernel CachyOS và Fedora gốc.
+- [`system/optimize/maintainance.sh`](system/optimize/maintainance.sh): Bảo trì hệ thống và **giữ tối đa 3 kernel** (Fedora gốc + CachyOS). Nếu vượt quá 3, xoá bản cũ nhất của dòng kernel *không* đang chạy (đang boot CachyOS thì xoá Fedora cũ nhất, và ngược lại), kèm `kmod-nvidia` đi theo; không bao giờ xoá kernel đang chạy. Các lệnh con: `prune-kernels [--dry-run]`, `install-auto`, `uninstall-auto`. `install-auto` cài hook `kernel-install` + `kernel-prune.service`/`.timer` để tự dọn sau khi cài kernel mới (đợi dnf/akmods xong) và 5 phút sau mỗi lần boot (an toàn khi cập nhật offline qua GNOME Software). Cơ chế này dựa vào `installonly_limit=2` trong [`dnf.conf`](system/after-install/dnf.conf).
+- [`system/optimize/deloldkernel.sh`](system/optimize/deloldkernel.sh): Xóa thủ công một phiên bản kernel cụ thể.
+- [`system/optimize/resignfornewkernel.sh`](system/optimize/resignfornewkernel.sh): Ký lại Secure Boot (MOK) cho cả kernel CachyOS và Fedora gốc.
 - [`system/optimize/tipntrick.md`](system/optimize/tipntrick.md): Sổ tay mẹo tiết kiệm pin và các lệnh kiểm tra/chẩn đoán kernel CachyOS, `sched_ext` (`scxctl`, `sched_bore`, NVMe I/O scheduler).
 
 ---
