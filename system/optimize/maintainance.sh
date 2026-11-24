@@ -27,7 +27,7 @@ need_root() {
   [[ $EUID -eq 0 ]] || { echo "Hãy chạy với sudo: sudo bash $SELF $*" >&2; exit 1; }
 }
 
-usage() { sed -n '2,14p' "$SELF" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '2,13p' "$SELF" | sed 's/^# \{0,1\}//'; }
 
 # Đợi dnf/rpm/akmods (build kmod NVIDIA cho kernel mới) chạy xong, tối đa 60 phút.
 wait_for_pkg_managers() {
